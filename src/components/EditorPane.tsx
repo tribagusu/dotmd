@@ -130,12 +130,16 @@ export default function EditorPane({ content, onChange, isDark }: EditorPaneProp
           lineNumbers: true,
           foldGutter: false,
           highlightActiveLine: false,
-          highlightSelectionMatches: true,
-          bracketMatching: true,
-          closeBrackets: true,
+          highlightSelectionMatches: false,
+          bracketMatching: false,
+          closeBrackets: false,
           autocompletion: false,
+          crosshairCursor: false,
+          rectangularSelection: false,
           defaultKeymap: true,
           syntaxHighlighting: false,
+          searchKeymap: false,
+          lintKeymap: false,
         }}
         style={{ height: "100%" }}
       />
