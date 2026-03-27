@@ -1,6 +1,8 @@
+import { useMemo } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import type { Components } from "react-markdown";
+import { useDebouncedValue } from "../hooks/useDebouncedValue";
 
 interface PreviewPaneProps {
   content: string;
@@ -20,11 +22,16 @@ const components: Components = {
   },
 };
 
+const plugins = [remarkGfm];
+
 export default function PreviewPane({ content }: PreviewPaneProps) {
+  const debouncedContent = useDebouncedValue(content, 150);
+  const memoizedPlugins = useMemo(() => plugins, []);
+
   return (
     <div className="preview-pane">
-      <ReactMarkdown remarkPlugins={[remarkGfm]} components={components}>
-        {content}
+      <ReactMarkdown remarkPlugins={memoizedPlugins} components={components}>
+        {debouncedContent}
       </ReactMarkdown>
     </div>
   );

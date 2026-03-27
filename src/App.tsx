@@ -37,26 +37,28 @@ function App() {
   // On mount, check if a file was passed via Finder before the frontend was ready
   useEffect(() => {
     if (!isTauri) return;
-    import("@tauri-apps/api/core").then(({ invoke }) => {
-      invoke<string | null>("get_initial_file").then((path) => {
-        if (path) {
-          loadFileFromPath(path);
-        }
-      });
-    });
+    import("@tauri-apps/api/core")
+      .then(({ invoke }) =>
+        invoke<string | null>("get_initial_file").then((path) => {
+          if (path) loadFileFromPath(path);
+        })
+      )
+      .catch((err) => console.error("Failed to get initial file:", err));
   }, [loadFileFromPath]);
 
   // Listen for files opened from Finder while the app is already running
   useEffect(() => {
     if (!isTauri) return;
     let unlisten: (() => void) | undefined;
-    import("@tauri-apps/api/event").then(({ listen }) => {
-      listen<string>("file-opened", (event) => {
-        loadFileFromPath(event.payload);
-      }).then((fn) => {
-        unlisten = fn;
-      });
-    });
+    import("@tauri-apps/api/event")
+      .then(({ listen }) =>
+        listen<string>("file-opened", (event) => {
+          loadFileFromPath(event.payload);
+        }).then((fn) => {
+          unlisten = fn;
+        })
+      )
+      .catch((err) => console.error("Failed to listen for file-opened:", err));
     return () => {
       unlisten?.();
     };
@@ -66,9 +68,11 @@ function App() {
   useEffect(() => {
     if (!isTauri) return;
     const filename = filePath ? filePath.split("/").pop() : "Untitled";
-    import("@tauri-apps/api/window").then(({ getCurrentWindow }) => {
-      getCurrentWindow().setTitle(`${filename} — DotMD`);
-    });
+    import("@tauri-apps/api/window")
+      .then(({ getCurrentWindow }) => {
+        getCurrentWindow().setTitle(`${filename} — DotMD`);
+      })
+      .catch((err) => console.error("Failed to set window title:", err));
   }, [filePath]);
 
   return (
