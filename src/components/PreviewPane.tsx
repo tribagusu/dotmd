@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { memo, useMemo } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import type { Components } from "react-markdown";
@@ -24,7 +24,7 @@ const components: Components = {
 
 const plugins = [remarkGfm];
 
-export default function PreviewPane({ content }: PreviewPaneProps) {
+export default memo(function PreviewPane({ content }: PreviewPaneProps) {
   const debouncedContent = useDebouncedValue(content, 150);
   const memoizedPlugins = useMemo(() => plugins, []);
 
@@ -35,4 +35,4 @@ export default function PreviewPane({ content }: PreviewPaneProps) {
       </ReactMarkdown>
     </div>
   );
-}
+});

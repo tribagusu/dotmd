@@ -7,6 +7,7 @@ import { useKeyboardShortcuts } from "./hooks/useKeyboardShortcuts";
 import { useFontSize } from "./hooks/useFontSize";
 import { useTheme } from "./hooks/useTheme";
 import { useSplitPane } from "./hooks/useSplitPane";
+import { isValidMarkdownPath } from "./utils/validation";
 
 const isTauri = "__TAURI_INTERNALS__" in window;
 
@@ -40,7 +41,7 @@ function App() {
     import("@tauri-apps/api/core")
       .then(({ invoke }) =>
         invoke<string | null>("get_initial_file").then((path) => {
-          if (path) loadFileFromPath(path);
+          if (path && isValidMarkdownPath(path)) loadFileFromPath(path);
         })
       )
       .catch((err) => console.error("Failed to get initial file:", err));
@@ -53,7 +54,9 @@ function App() {
     import("@tauri-apps/api/event")
       .then(({ listen }) =>
         listen<string>("file-opened", (event) => {
-          loadFileFromPath(event.payload);
+          if (isValidMarkdownPath(event.payload)) {
+            loadFileFromPath(event.payload);
+          }
         }).then((fn) => {
           unlisten = fn;
         })
@@ -67,7 +70,7 @@ function App() {
   // Update window title
   useEffect(() => {
     if (!isTauri) return;
-    const filename = filePath ? filePath.split("/").pop() : "Untitled";
+    const filename = filePath ? filePath.replace(/\\/g, "/").split("/").pop() : "Untitled";
     import("@tauri-apps/api/window")
       .then(({ getCurrentWindow }) => {
         getCurrentWindow().setTitle(`${filename} — DotMD`);

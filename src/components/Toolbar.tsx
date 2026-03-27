@@ -53,12 +53,16 @@ const modeLabels: Record<ThemeMode, string> = {
 export default function Toolbar({ filePath, content, themeMode, onCycleTheme }: ToolbarProps) {
   const [copied, setCopied] = useState(false);
 
-  const filename = filePath ? filePath.split("/").pop() : null;
+  const filename = filePath ? filePath.replace(/\\/g, "/").split("/").pop() : null;
 
   const handleCopy = useCallback(async () => {
-    await navigator.clipboard.writeText(content);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    try {
+      await navigator.clipboard.writeText(content);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error("Failed to copy to clipboard:", err);
+    }
   }, [content]);
 
   return (

@@ -1,39 +1,30 @@
 import { useState, useCallback, useEffect } from "react";
+import { clamp } from "../utils/clamp";
 
-const EDITOR_DEFAULT = 18;
-const PREVIEW_DEFAULT = 18;
+const DEFAULT_SIZE = 18;
 const STEP = 1;
 const MIN = 10;
 const MAX = 28;
 
-function clamp(v: number) {
-  return Math.min(MAX, Math.max(MIN, v));
-}
-
 export function useFontSize() {
-  const [editorSize, setEditorSize] = useState(EDITOR_DEFAULT);
-  const [previewSize, setPreviewSize] = useState(PREVIEW_DEFAULT);
+  const [fontSize, setFontSize] = useState(DEFAULT_SIZE);
 
-  // Apply CSS variables to the document
   useEffect(() => {
-    document.documentElement.style.setProperty("--editor-font-size", `${editorSize}px`);
-    document.documentElement.style.setProperty("--preview-font-size", `${previewSize}px`);
-  }, [editorSize, previewSize]);
+    document.documentElement.style.setProperty("--editor-font-size", `${fontSize}px`);
+    document.documentElement.style.setProperty("--preview-font-size", `${fontSize}px`);
+  }, [fontSize]);
 
   const zoomIn = useCallback(() => {
-    setEditorSize((s) => clamp(s + STEP));
-    setPreviewSize((s) => clamp(s + STEP));
+    setFontSize((s) => clamp(s + STEP, MIN, MAX));
   }, []);
 
   const zoomOut = useCallback(() => {
-    setEditorSize((s) => clamp(s - STEP));
-    setPreviewSize((s) => clamp(s - STEP));
+    setFontSize((s) => clamp(s - STEP, MIN, MAX));
   }, []);
 
   const resetZoom = useCallback(() => {
-    setEditorSize(EDITOR_DEFAULT);
-    setPreviewSize(PREVIEW_DEFAULT);
+    setFontSize(DEFAULT_SIZE);
   }, []);
 
-  return { editorSize, previewSize, zoomIn, zoomOut, resetZoom };
+  return { fontSize, zoomIn, zoomOut, resetZoom };
 }
