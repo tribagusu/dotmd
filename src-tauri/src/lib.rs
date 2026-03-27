@@ -7,7 +7,7 @@ struct InitialFile(Mutex<Option<String>>);
 
 #[tauri::command]
 fn get_initial_file(state: State<'_, InitialFile>) -> Option<String> {
-    state.0.lock().unwrap().take()
+    state.0.lock().ok()?.take()
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -37,7 +37,9 @@ pub fn run() {
                         let path_str = path.to_string_lossy().to_string();
                         let _ = app.emit("file-opened", path_str.clone());
                         if let Some(state) = app.try_state::<InitialFile>() {
-                            *state.0.lock().unwrap() = Some(path_str);
+                            if let Ok(mut guard) = state.0.lock() {
+                                *guard = Some(path_str);
+                            }
                         }
                     }
                 }

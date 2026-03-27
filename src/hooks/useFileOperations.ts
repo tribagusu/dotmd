@@ -10,28 +10,52 @@ export function useFileOperations() {
   const isDirty = content !== savedContent;
 
   const loadFileFromPath = useCallback(async (path: string) => {
-    const text = await readTextFile(path);
-    setContent(text);
-    setSavedContent(text);
-    setFilePath(path);
+    try {
+      const text = await readTextFile(path);
+      setContent(text);
+      setSavedContent(text);
+      setFilePath(path);
+    } catch (err) {
+      console.error("Failed to read file:", path, err);
+    }
   }, []);
 
   const openFile = useCallback(async () => {
-    const selected = await open({
-      multiple: false,
-      filters: [{ name: "Markdown", extensions: ["md", "markdown"] }],
-    });
-    if (selected) {
-      await loadFileFromPath(selected as string);
+    try {
+      const selected = await open({
+        multiple: false,
+        filters: [{ name: "Markdown", extensions: ["md", "markdown"] }],
+      });
+      if (selected && typeof selected === "string") {
+        await loadFileFromPath(selected);
+      }
+    } catch (err) {
+      console.error("Failed to open file:", err);
     }
   }, [loadFileFromPath]);
 
   const saveFile = useCallback(async () => {
-    if (filePath) {
-      await writeTextFile(filePath, content);
-      setSavedContent(content);
-    } else {
-      // No existing path — trigger Save As
+    try {
+      if (filePath) {
+        await writeTextFile(filePath, content);
+        setSavedContent(content);
+      } else {
+        const path = await save({
+          filters: [{ name: "Markdown", extensions: ["md", "markdown"] }],
+        });
+        if (path) {
+          await writeTextFile(path, content);
+          setSavedContent(content);
+          setFilePath(path);
+        }
+      }
+    } catch (err) {
+      console.error("Failed to save file:", err);
+    }
+  }, [filePath, content]);
+
+  const saveFileAs = useCallback(async () => {
+    try {
       const path = await save({
         filters: [{ name: "Markdown", extensions: ["md", "markdown"] }],
       });
@@ -40,17 +64,8 @@ export function useFileOperations() {
         setSavedContent(content);
         setFilePath(path);
       }
-    }
-  }, [filePath, content]);
-
-  const saveFileAs = useCallback(async () => {
-    const path = await save({
-      filters: [{ name: "Markdown", extensions: ["md", "markdown"] }],
-    });
-    if (path) {
-      await writeTextFile(path, content);
-      setSavedContent(content);
-      setFilePath(path);
+    } catch (err) {
+      console.error("Failed to save file:", err);
     }
   }, [content]);
 
