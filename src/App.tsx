@@ -16,6 +16,7 @@ function App() {
     filePath,
     content,
     setContent,
+    isLoading,
     openFile,
     saveFile,
     saveFileAs,
@@ -80,6 +81,11 @@ function App() {
 
   return (
     <div className="app-container">
+      {isLoading && (
+        <div className="loading-overlay" role="status" aria-label="Loading">
+          <div className="loading-spinner" />
+        </div>
+      )}
       <Toolbar
         filePath={filePath}
         content={content}

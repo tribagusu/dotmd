@@ -6,10 +6,12 @@ export function useFileOperations() {
   const [filePath, setFilePath] = useState<string | null>(null);
   const [content, setContent] = useState("");
   const [savedContent, setSavedContent] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const isDirty = content !== savedContent;
 
   const loadFileFromPath = useCallback(async (path: string) => {
+    setIsLoading(true);
     try {
       const text = await readTextFile(path);
       setContent(text);
@@ -17,6 +19,8 @@ export function useFileOperations() {
       setFilePath(path);
     } catch (err) {
       console.error("Failed to read file:", path, err);
+    } finally {
+      setIsLoading(false);
     }
   }, []);
 
@@ -35,6 +39,7 @@ export function useFileOperations() {
   }, [loadFileFromPath]);
 
   const saveFile = useCallback(async () => {
+    setIsLoading(true);
     try {
       if (filePath) {
         await writeTextFile(filePath, content);
@@ -51,10 +56,13 @@ export function useFileOperations() {
       }
     } catch (err) {
       console.error("Failed to save file:", err);
+    } finally {
+      setIsLoading(false);
     }
   }, [filePath, content]);
 
   const saveFileAs = useCallback(async () => {
+    setIsLoading(true);
     try {
       const path = await save({
         filters: [{ name: "Markdown", extensions: ["md", "markdown"] }],
@@ -66,6 +74,8 @@ export function useFileOperations() {
       }
     } catch (err) {
       console.error("Failed to save file:", err);
+    } finally {
+      setIsLoading(false);
     }
   }, [content]);
 
@@ -74,6 +84,7 @@ export function useFileOperations() {
     content,
     savedContent,
     isDirty,
+    isLoading,
     setContent,
     openFile,
     saveFile,
