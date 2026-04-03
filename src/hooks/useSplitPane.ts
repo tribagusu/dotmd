@@ -21,6 +21,10 @@ export function useSplitPane() {
     setSplit(DEFAULT_SPLIT);
   }, []);
 
+  const onDividerDoubleClick = useCallback(() => {
+    resetSplit();
+  }, [resetSplit]);
+
   const onMouseDown = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
     dragging.current = true;
@@ -59,5 +63,5 @@ export function useSplitPane() {
     };
   }, []);
 
-  return { split, resetSplit, containerRef, onMouseDown };
+  return { split, resetSplit, containerRef, onMouseDown, onDividerDoubleClick };
 }
