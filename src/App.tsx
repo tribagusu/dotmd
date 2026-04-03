@@ -26,7 +26,7 @@ function App() {
 
   const { zoomIn, zoomOut, resetZoom } = useFontSize();
   const { mode, isDark, cycleTheme } = useTheme();
-  const { split, resetSplit, containerRef, onMouseDown } = useSplitPane();
+  const { split, resetSplit, containerRef, onMouseDown, onDividerDoubleClick } = useSplitPane();
 
   // Editor starts visible (no file) or hidden (file loaded)
   const [editorVisible, setEditorVisible] = useState(true);
@@ -145,7 +145,11 @@ function App() {
             <div style={{ width: `${split}%`, height: "100%", overflow: "hidden" }}>
               <EditorPane content={content} onChange={setContent} isDark={isDark} />
             </div>
-            <div className="split-divider" onMouseDown={onMouseDown} />
+            <div
+              className="split-divider"
+              onMouseDown={onMouseDown}
+              onDoubleClick={onDividerDoubleClick}
+            />
           </>
         )}
         <div style={{ width: editorVisible ? `${100 - split}%` : "100%", height: "100%" }}>
