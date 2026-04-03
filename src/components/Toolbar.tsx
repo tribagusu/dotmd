@@ -5,7 +5,9 @@ interface ToolbarProps {
   filePath: string | null;
   content: string;
   themeMode: ThemeMode;
+  editorVisible: boolean;
   onCycleTheme: () => void;
+  onToggleEditor: () => void;
 }
 
 // SVG icons for each theme mode
@@ -44,13 +46,29 @@ function ThemeIcon({ mode }: { mode: ThemeMode }) {
   );
 }
 
+function EditIcon() {
+  return (
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.3">
+      <path d="M11.5 1.5l3 3-9 9H2.5v-3l9-9z" />
+      <line x1="9" y1="4" x2="12" y2="7" />
+    </svg>
+  );
+}
+
 const modeLabels: Record<ThemeMode, string> = {
   system: "System",
   light: "Light",
   dark: "Dark",
 };
 
-export default function Toolbar({ filePath, content, themeMode, onCycleTheme }: ToolbarProps) {
+export default function Toolbar({
+  filePath,
+  content,
+  themeMode,
+  editorVisible,
+  onCycleTheme,
+  onToggleEditor,
+}: ToolbarProps) {
   const [copied, setCopied] = useState(false);
 
   const filename = filePath ? filePath.replace(/\\/g, "/").split("/").pop() : null;
@@ -67,7 +85,17 @@ export default function Toolbar({ filePath, content, themeMode, onCycleTheme }: 
 
   return (
     <div className="toolbar" data-tauri-drag-region>
-      <div className="toolbar-spacer" />
+      <div className="toolbar-left">
+        <button
+          className={`toolbar-btn toolbar-edit-btn${editorVisible ? " active" : ""}`}
+          onClick={onToggleEditor}
+          title="Toggle editor (⌘E)"
+        >
+          <EditIcon />
+          Edit
+          <kbd className="toolbar-kbd">⌘E</kbd>
+        </button>
+      </div>
       <span className="toolbar-filename">{filename || "Untitled"}</span>
       <div className="toolbar-spacer" />
       <div className="toolbar-actions">

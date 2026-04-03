@@ -34,10 +34,9 @@ const baseTheme = EditorView.theme({
   ".cm-activeLineGutter": {
     backgroundColor: "transparent",
   },
-  ".cm-selectionBackground, &.cm-focused .cm-selectionBackground, ::selection":
-    {
-      backgroundColor: "rgba(128, 128, 128, 0.2) !important",
-    },
+  ".cm-selectionBackground, &.cm-focused .cm-selectionBackground, ::selection": {
+    backgroundColor: "rgba(128, 128, 128, 0.2) !important",
+  },
 });
 
 // Light mode syntax colors
@@ -94,12 +93,7 @@ const darkHighlighting = HighlightStyle.define([
 
 function buildExtensions(isDark: boolean): Extension[] {
   const highlighting = isDark ? darkHighlighting : lightHighlighting;
-  return [
-    markdown(),
-    baseTheme,
-    EditorView.lineWrapping,
-    syntaxHighlighting(highlighting),
-  ];
+  return [markdown(), baseTheme, EditorView.lineWrapping, syntaxHighlighting(highlighting)];
 }
 
 export default function EditorPane({ content, onChange, isDark }: EditorPaneProps) {
