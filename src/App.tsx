@@ -26,7 +26,24 @@ function App() {
 
   const { zoomIn, zoomOut, resetZoom } = useFontSize();
   const { mode, isDark, cycleTheme } = useTheme();
-  const { split, containerRef, onMouseDown } = useSplitPane();
+  const { split, resetSplit, containerRef, onMouseDown } = useSplitPane();
+
+  // Editor starts visible (no file) or hidden (file loaded)
+  const [editorVisible, setEditorVisible] = useState(true);
+
+  const toggleEditor = useCallback(() => {
+    setEditorVisible((prev) => {
+      if (!prev) resetSplit();
+      return !prev;
+    });
+  }, [resetSplit]);
+
+  // When a file is loaded, hide the editor (preview-only mode)
+  useEffect(() => {
+    if (filePath) {
+      setEditorVisible(false);
+    }
+  }, [filePath]);
 
   const [showSaveToast, setShowSaveToast] = useState(false);
   const toastTimerRef = useRef<ReturnType<typeof setTimeout>>();
@@ -60,6 +77,7 @@ function App() {
     onZoomIn: zoomIn,
     onZoomOut: zoomOut,
     onResetZoom: resetZoom,
+    onToggleEditor: toggleEditor,
   });
 
   // On mount, check if a file was passed via Finder before the frontend was ready
@@ -113,13 +131,24 @@ function App() {
           <div className="loading-spinner" />
         </div>
       )}
-      <Toolbar filePath={filePath} content={content} themeMode={mode} onCycleTheme={cycleTheme} />
+      <Toolbar
+        filePath={filePath}
+        content={content}
+        themeMode={mode}
+        editorVisible={editorVisible}
+        onCycleTheme={cycleTheme}
+        onToggleEditor={toggleEditor}
+      />
       <div className="main-content" ref={containerRef}>
-        <div style={{ width: `${split}%`, height: "100%", overflow: "hidden" }}>
-          <EditorPane content={content} onChange={setContent} isDark={isDark} />
-        </div>
-        <div className="split-divider" onMouseDown={onMouseDown} />
-        <div style={{ width: `${100 - split}%`, height: "100%" }}>
+        {editorVisible && (
+          <>
+            <div style={{ width: `${split}%`, height: "100%", overflow: "hidden" }}>
+              <EditorPane content={content} onChange={setContent} isDark={isDark} />
+            </div>
+            <div className="split-divider" onMouseDown={onMouseDown} />
+          </>
+        )}
+        <div style={{ width: editorVisible ? `${100 - split}%` : "100%", height: "100%" }}>
           <PreviewPane content={content} />
         </div>
       </div>

@@ -1,20 +1,12 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import { clamp } from "../utils/clamp";
 
-const STORAGE_KEY = "dotmd-split";
 const DEFAULT_SPLIT = 50;
 const MIN_SPLIT = 20;
 const MAX_SPLIT = 80;
 
 export function useSplitPane() {
-  const [split, setSplit] = useState<number>(() => {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-      const val = parseFloat(stored);
-      if (!isNaN(val)) return clamp(val, MIN_SPLIT, MAX_SPLIT);
-    }
-    return DEFAULT_SPLIT;
-  });
+  const [split, setSplit] = useState<number>(DEFAULT_SPLIT);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const dragging = useRef(false);
@@ -24,6 +16,10 @@ export function useSplitPane() {
     onMouseMove: ((ev: MouseEvent) => void) | null;
     onMouseUp: (() => void) | null;
   }>({ onMouseMove: null, onMouseUp: null });
+
+  const resetSplit = useCallback(() => {
+    setSplit(DEFAULT_SPLIT);
+  }, []);
 
   const onMouseDown = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
@@ -38,10 +34,6 @@ export function useSplitPane() {
 
     const onMouseUp = () => {
       dragging.current = false;
-      setSplit((current) => {
-        localStorage.setItem(STORAGE_KEY, String(current));
-        return current;
-      });
       document.removeEventListener("mousemove", onMouseMove);
       document.removeEventListener("mouseup", onMouseUp);
       document.body.style.cursor = "";
@@ -67,5 +59,5 @@ export function useSplitPane() {
     };
   }, []);
 
-  return { split, containerRef, onMouseDown };
+  return { split, resetSplit, containerRef, onMouseDown };
 }

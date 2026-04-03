@@ -7,6 +7,7 @@ interface ShortcutActions {
   onZoomIn: () => void;
   onZoomOut: () => void;
   onResetZoom: () => void;
+  onToggleEditor: () => void;
 }
 
 export function useKeyboardShortcuts({
@@ -16,6 +17,7 @@ export function useKeyboardShortcuts({
   onZoomIn,
   onZoomOut,
   onResetZoom,
+  onToggleEditor,
 }: ShortcutActions) {
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -28,6 +30,9 @@ export function useKeyboardShortcuts({
       } else if (e.metaKey && e.key === "s") {
         e.preventDefault();
         onSave();
+      } else if (e.metaKey && e.key === "e") {
+        e.preventDefault();
+        onToggleEditor();
       } else if (e.metaKey && (e.key === "=" || e.key === "+")) {
         e.preventDefault();
         onZoomIn();
@@ -42,5 +47,5 @@ export function useKeyboardShortcuts({
 
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
-  }, [onOpen, onSave, onSaveAs, onZoomIn, onZoomOut, onResetZoom]);
+  }, [onOpen, onSave, onSaveAs, onZoomIn, onZoomOut, onResetZoom, onToggleEditor]);
 }

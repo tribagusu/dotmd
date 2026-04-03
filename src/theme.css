@@ -124,6 +124,12 @@ body,
   pointer-events: none;
 }
 
+.toolbar-left {
+  display: flex;
+  align-items: center;
+  -webkit-app-region: no-drag;
+}
+
 .toolbar-spacer {
   flex: 1;
 }
@@ -139,15 +145,16 @@ body,
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 5px 12px;
+  padding: 6px 14px;
   border: none;
   border-radius: 6px;
   background: var(--copy-btn-bg);
   color: var(--text-primary);
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 500;
   cursor: pointer;
   transition: background 0.15s;
+  height: 32px;
 }
 
 .toolbar-btn:hover {
@@ -155,16 +162,37 @@ body,
 }
 
 .toolbar-btn svg {
-  width: 14px;
-  height: 14px;
+  width: 16px;
+  height: 16px;
+}
+
+.toolbar-edit-btn.active {
+  background: var(--link-color);
+  color: #fff;
+}
+
+.toolbar-edit-btn.active:hover {
+  opacity: 0.9;
+}
+
+.toolbar-kbd {
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--text-muted);
+  margin-left: 2px;
+}
+
+.toolbar-edit-btn.active .toolbar-kbd {
+  color: rgba(255, 255, 255, 0.7);
 }
 
 .toolbar-menu-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   border: none;
   border-radius: 6px;
   background: transparent;
