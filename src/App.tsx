@@ -1,7 +1,8 @@
-import { useEffect } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Toolbar from "./components/Toolbar";
 import EditorPane from "./components/EditorPane";
 import PreviewPane from "./components/PreviewPane";
+import SaveToast from "./components/SaveToast";
 import { useFileOperations } from "./hooks/useFileOperations";
 import { useKeyboardShortcuts } from "./hooks/useKeyboardShortcuts";
 import { useFontSize } from "./hooks/useFontSize";
@@ -27,10 +28,35 @@ function App() {
   const { mode, isDark, cycleTheme } = useTheme();
   const { split, containerRef, onMouseDown } = useSplitPane();
 
+  const [showSaveToast, setShowSaveToast] = useState(false);
+  const toastTimerRef = useRef<ReturnType<typeof setTimeout>>();
+
+  useEffect(() => {
+    return () => clearTimeout(toastTimerRef.current);
+  }, []);
+
+  const handleSave = useCallback(async () => {
+    const success = await saveFile();
+    if (success) {
+      clearTimeout(toastTimerRef.current);
+      setShowSaveToast(true);
+      toastTimerRef.current = setTimeout(() => setShowSaveToast(false), 1000);
+    }
+  }, [saveFile]);
+
+  const handleSaveAs = useCallback(async () => {
+    const success = await saveFileAs();
+    if (success) {
+      clearTimeout(toastTimerRef.current);
+      setShowSaveToast(true);
+      toastTimerRef.current = setTimeout(() => setShowSaveToast(false), 1000);
+    }
+  }, [saveFileAs]);
+
   useKeyboardShortcuts({
     onOpen: openFile,
-    onSave: saveFile,
-    onSaveAs: saveFileAs,
+    onSave: handleSave,
+    onSaveAs: handleSaveAs,
     onZoomIn: zoomIn,
     onZoomOut: zoomOut,
     onResetZoom: resetZoom,
@@ -43,7 +69,7 @@ function App() {
       .then(({ invoke }) =>
         invoke<string | null>("get_initial_file").then((path) => {
           if (path && isValidMarkdownPath(path)) loadFileFromPath(path);
-        })
+        }),
       )
       .catch((err) => console.error("Failed to get initial file:", err));
   }, [loadFileFromPath]);
@@ -60,7 +86,7 @@ function App() {
           }
         }).then((fn) => {
           unlisten = fn;
-        })
+        }),
       )
       .catch((err) => console.error("Failed to listen for file-opened:", err));
     return () => {
@@ -81,17 +107,13 @@ function App() {
 
   return (
     <div className="app-container">
+      <SaveToast visible={showSaveToast} />
       {isLoading && (
         <div className="loading-overlay" role="status" aria-label="Loading">
           <div className="loading-spinner" />
         </div>
       )}
-      <Toolbar
-        filePath={filePath}
-        content={content}
-        themeMode={mode}
-        onCycleTheme={cycleTheme}
-      />
+      <Toolbar filePath={filePath} content={content} themeMode={mode} onCycleTheme={cycleTheme} />
       <div className="main-content" ref={containerRef}>
         <div style={{ width: `${split}%`, height: "100%", overflow: "hidden" }}>
           <EditorPane content={content} onChange={setContent} isDark={isDark} />
