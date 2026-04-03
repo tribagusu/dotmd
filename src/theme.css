@@ -469,3 +469,20 @@ body,
     transform: rotate(360deg);
   }
 }
+
+/* ========== Save Toast ========== */
+.save-toast {
+  position: fixed;
+  top: 60px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--bg-toolbar);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 6px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  z-index: 1000;
+  pointer-events: none;
+}

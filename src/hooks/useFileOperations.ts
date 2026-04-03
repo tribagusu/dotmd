@@ -38,12 +38,13 @@ export function useFileOperations() {
     }
   }, [loadFileFromPath]);
 
-  const saveFile = useCallback(async () => {
+  const saveFile = useCallback(async (): Promise<boolean> => {
     setIsLoading(true);
     try {
       if (filePath) {
         await writeTextFile(filePath, content);
         setSavedContent(content);
+        return true;
       } else {
         const path = await save({
           filters: [{ name: "Markdown", extensions: ["md", "markdown"] }],
@@ -52,6 +53,7 @@ export function useFileOperations() {
           await writeTextFile(path, content);
           setSavedContent(content);
           setFilePath(path);
+          return true;
         }
       }
     } catch (err) {
@@ -59,9 +61,10 @@ export function useFileOperations() {
     } finally {
       setIsLoading(false);
     }
+    return false;
   }, [filePath, content]);
 
-  const saveFileAs = useCallback(async () => {
+  const saveFileAs = useCallback(async (): Promise<boolean> => {
     setIsLoading(true);
     try {
       const path = await save({
@@ -71,12 +74,14 @@ export function useFileOperations() {
         await writeTextFile(path, content);
         setSavedContent(content);
         setFilePath(path);
+        return true;
       }
     } catch (err) {
       console.error("Failed to save file:", err);
     } finally {
       setIsLoading(false);
     }
+    return false;
   }, [content]);
 
   return {

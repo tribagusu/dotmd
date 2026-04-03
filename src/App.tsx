@@ -1,7 +1,8 @@
-import { useState, useEffect, useCallback } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Toolbar from "./components/Toolbar";
 import EditorPane from "./components/EditorPane";
 import PreviewPane from "./components/PreviewPane";
+import SaveToast from "./components/SaveToast";
 import { useFileOperations } from "./hooks/useFileOperations";
 import { useKeyboardShortcuts } from "./hooks/useKeyboardShortcuts";
 import { useFontSize } from "./hooks/useFontSize";
@@ -44,10 +45,35 @@ function App() {
     }
   }, [filePath]);
 
+  const [showSaveToast, setShowSaveToast] = useState(false);
+  const toastTimerRef = useRef<ReturnType<typeof setTimeout>>();
+
+  useEffect(() => {
+    return () => clearTimeout(toastTimerRef.current);
+  }, []);
+
+  const handleSave = useCallback(async () => {
+    const success = await saveFile();
+    if (success) {
+      clearTimeout(toastTimerRef.current);
+      setShowSaveToast(true);
+      toastTimerRef.current = setTimeout(() => setShowSaveToast(false), 1000);
+    }
+  }, [saveFile]);
+
+  const handleSaveAs = useCallback(async () => {
+    const success = await saveFileAs();
+    if (success) {
+      clearTimeout(toastTimerRef.current);
+      setShowSaveToast(true);
+      toastTimerRef.current = setTimeout(() => setShowSaveToast(false), 1000);
+    }
+  }, [saveFileAs]);
+
   useKeyboardShortcuts({
     onOpen: openFile,
-    onSave: saveFile,
-    onSaveAs: saveFileAs,
+    onSave: handleSave,
+    onSaveAs: handleSaveAs,
     onZoomIn: zoomIn,
     onZoomOut: zoomOut,
     onResetZoom: resetZoom,
@@ -99,6 +125,7 @@ function App() {
 
   return (
     <div className="app-container">
+      <SaveToast visible={showSaveToast} />
       {isLoading && (
         <div className="loading-overlay" role="status" aria-label="Loading">
           <div className="loading-spinner" />
