@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import CodeMirror, { type Extension } from "@uiw/react-codemirror";
 import { markdown } from "@codemirror/lang-markdown";
 import { EditorView } from "@codemirror/view";
+import { search } from "@codemirror/search";
 import { HighlightStyle, syntaxHighlighting } from "@codemirror/language";
 import { tags } from "@lezer/highlight";
 
@@ -93,7 +94,13 @@ const darkHighlighting = HighlightStyle.define([
 
 function buildExtensions(isDark: boolean): Extension[] {
   const highlighting = isDark ? darkHighlighting : lightHighlighting;
-  return [markdown(), baseTheme, EditorView.lineWrapping, syntaxHighlighting(highlighting)];
+  return [
+    markdown(),
+    baseTheme,
+    EditorView.lineWrapping,
+    syntaxHighlighting(highlighting),
+    search({ top: true }),
+  ];
 }
 
 export default function EditorPane({ content, onChange, isDark }: EditorPaneProps) {
@@ -132,7 +139,7 @@ export default function EditorPane({ content, onChange, isDark }: EditorPaneProp
           rectangularSelection: false,
           defaultKeymap: true,
           syntaxHighlighting: false,
-          searchKeymap: false,
+          searchKeymap: true,
           lintKeymap: false,
         }}
         style={{ height: "100%" }}
