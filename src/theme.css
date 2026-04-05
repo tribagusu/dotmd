@@ -522,7 +522,9 @@ body,
 }
 
 .editor-pane .cm-editor .cm-searchMatch-selected {
-  background: rgba(74, 124, 150, 0.4);
+  background: #1a1a1a;
+  color: #fff;
+  border-radius: 2px;
 }
 
 /* ========== Loading Overlay ========== */
