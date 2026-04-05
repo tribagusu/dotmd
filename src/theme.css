@@ -326,6 +326,12 @@ body,
   margin-bottom: 1em;
 }
 
+/* Text blocks should wrap like prose, not scroll like code */
+.preview-pane pre:has(code.language-text) {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
 .preview-pane pre code {
   font-family: var(--font-mono);
   font-size: 13px;
