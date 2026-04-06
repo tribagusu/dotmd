@@ -30,7 +30,13 @@
   --copy-btn-hover: #ddd8ce;
 
   --font-serif: Georgia, Charter, "Times New Roman", serif;
+  --font-sans: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Helvetica, Arial, sans-serif;
   --font-mono: "JetBrains Mono", Consolas, Monaco, "Courier New", monospace;
+
+  --preview-heading-color: var(--text-primary);
+  --preview-text-color: var(--text-primary);
+  --preview-divider-color: var(--border-color);
+  --preview-font: var(--font-serif);
 
   --titlebar-height: 46px;
 
@@ -41,13 +47,18 @@
 html[data-theme="dark"] {
   --bg-primary: #232323;
   --bg-editor: #232323;
-  --bg-preview: #2b2b2b;
+  --bg-preview: #1e2028;
   --bg-toolbar: #333;
   --bg-divider: #444;
   --text-primary: #d4d4d4;
   --text-secondary: #aaa;
   --text-muted: #777;
   --border-color: #444;
+
+  --preview-heading-color: #c8ccd4;
+  --preview-text-color: #9da3ae;
+  --preview-divider-color: #3a3d45;
+  --preview-font: var(--font-sans);
 
   --code-block-bg: #3a3a3a;
   --code-block-text: #d4d4d4;
@@ -264,8 +275,9 @@ body,
 .preview-pane h4,
 .preview-pane h5,
 .preview-pane h6 {
-  font-family: var(--font-serif);
-  color: var(--text-primary);
+  font-family: var(--preview-font);
+  color: var(--preview-heading-color);
+  font-weight: 700;
   margin-top: 1.4em;
   margin-bottom: 0.6em;
   line-height: 1.3;
@@ -273,13 +285,13 @@ body,
 
 .preview-pane h1 {
   font-size: 2em;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--preview-divider-color);
   padding-bottom: 0.3em;
 }
 
 .preview-pane h2 {
   font-size: 1.5em;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--preview-divider-color);
   padding-bottom: 0.25em;
 }
 
@@ -291,11 +303,11 @@ body,
 }
 
 .preview-pane p {
-  font-family: var(--font-serif);
+  font-family: var(--preview-font);
   font-size: var(--preview-font-size);
   line-height: 1.75;
   margin-bottom: 1em;
-  color: var(--text-primary);
+  color: var(--preview-text-color);
 }
 
 .preview-pane a {
@@ -358,11 +370,12 @@ body,
 /* Lists */
 .preview-pane ul,
 .preview-pane ol {
-  font-family: var(--font-serif);
+  font-family: var(--preview-font);
   font-size: var(--preview-font-size);
   line-height: 1.75;
   margin-bottom: 1em;
   padding-left: 2em;
+  color: var(--preview-text-color);
 }
 
 .preview-pane li {
@@ -379,8 +392,9 @@ body,
   width: 100%;
   border-collapse: collapse;
   margin-bottom: 1em;
-  font-family: var(--font-serif);
+  font-family: var(--preview-font);
   font-size: var(--preview-font-size);
+  color: var(--preview-text-color);
 }
 
 .preview-pane th {
@@ -403,7 +417,7 @@ body,
 /* Horizontal rule */
 .preview-pane hr {
   border: none;
-  border-top: 1px solid var(--border-color);
+  border-top: 1px solid var(--preview-divider-color);
   margin: 2em 0;
 }
 
